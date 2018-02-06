@@ -102,7 +102,7 @@ def breadthFirstSearch(problem):
             return getMoveList(node, prev)
         visited.add(node)
         successors = problem.getSuccessors(node)
-        for successor, action in successors:
+        for successor, action, cost in successors:
             if successor not in visited:
                 nodes_to_visit.push(successor)
                 prev[successor] = {"state":node, "action":action}
@@ -137,7 +137,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return getMoveList(state, prev)
         visited.add(state) # add state and cost to visited
         successors = problem.getSuccessors(state)
-        for successor, action in successors:
+        for successor, action, payload in successors:
             if successor not in visited:
                 h = heuristic(successor, problem)
                 g = path_cost + 1
