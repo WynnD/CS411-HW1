@@ -337,7 +337,8 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
-        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+        for action in [Directions.NORTH, Directions.SOUTH,
+                       Directions.EAST, Directions.WEST]:
             x, y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
@@ -392,11 +393,11 @@ def cornersHeuristic(state, problem):
         dx = position[0]-corner[0]
         dy = position[1]-corner[1]
 
-        dist = (dx ^ 2 + dy ^ 2)
-        # dist = abs(position[0]-corner[0])+abs(position[1]-corner[1])
+        dist = (dx ^ 2 + dy ^ 2)  # euclidian
+        # dist = abs(dx)+abs(dy)  # manhattan
         dist_sum += dist
         sums.append(dist)
-    if len(sums) == 0:
+    if len(corners) == 0:
         return 0
     return dist_sum  # Default to trivial solution
 
