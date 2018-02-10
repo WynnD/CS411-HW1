@@ -103,10 +103,11 @@ def breadthFirstSearch(problem):
         visited.add(node)
         successors = problem.getSuccessors(node)
         for successor, action, cost in successors:
-            if successor not in visited:
+            if successor not in visited and \
+                successor not in nodes_to_visit.list:
                 nodes_to_visit.push(successor)
                 prev[successor] = {"state":node, "action":action}
-    
+
     return []
 
 def uniformCostSearch(problem):
@@ -123,28 +124,32 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
     visited = set()
     nodes_to_visit = util.PriorityQueue()
-    nodes_to_visit.push({"state": problem.getStartState(), "path_cost": 0}, 0)
+    g_cost = {problem.getStartState(): 0}
+    nodes_to_visit.push(problem.getStartState(), 0)
     prev = {}
 
     while not nodes_to_visit.isEmpty():
-        node = nodes_to_visit.pop()
-        path_cost = node["path_cost"]
-        state = node["state"]
+        state = nodes_to_visit.pop()
         if problem.isGoalState(state): # if goal state, then return list of moves
             return getMoveList(state, prev)
         visited.add(state) # add state and cost to visited
         successors = problem.getSuccessors(state)
-        for successor, action, payload in successors:
+        for successor, action, cost in successors:
+            if successor not in g_cost.keys():
+                g_cost[successor] = 10000000
             if successor not in visited:
                 h = heuristic(successor, problem)
-                g = path_cost + 1
-                f = h + g
-                to_push = {"state": successor, "path_cost": g}
-                nodes_to_visit.push(to_push, f)
-                prev[successor] = {"state": state, "action": action, "cum_cost": g}
+                g = g_cost[state] + cost
+                f = h + g_cost[state]
+                if g < g_cost[successor]:
+                    prev[successor] = {"state": state, "action": action}
+                    g_cost[successor] = g
+                    f = h + g
+                
+                nodes_to_visit.update(successor, f)
+
 
     return []
 

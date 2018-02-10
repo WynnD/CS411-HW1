@@ -393,13 +393,13 @@ def cornersHeuristic(state, problem):
         dx = position[0]-corner[0]
         dy = position[1]-corner[1]
 
-        dist = (dx ^ 2 + dy ^ 2)  # euclidian
+        dist = (dx**2 + dy**2)**(0.5)  # euclidian
         # dist = abs(dx)+abs(dy)  # manhattan
         dist_sum += dist
         sums.append(dist)
     if len(corners) == 0:
         return 0
-    return dist_sum  # Default to trivial solution
+    return min(sums)  # Default to trivial solution
 
 
 class AStarCornersAgent(SearchAgent):
