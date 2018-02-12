@@ -72,22 +72,25 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+
 def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
+    visited = set()
+    nodes_to_visit = util.Stack()
+    nodes_to_visit.push(problem.getStartState())
+    prev = {}
 
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
+    while not nodes_to_visit.isEmpty():
+        node = nodes_to_visit.pop()
+        if problem.isGoalState(node):
+            return getMoveList(node, prev)
+        visited.add(node)
+        successors = problem.getSuccessors(node)
+        for successor, action, cost in successors:
+            if successor not in visited:
+                nodes_to_visit.push(successor)
+                prev[successor] = {"state": node, "action": action}
 
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -112,8 +115,27 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    visited = set()
+    nodes_to_visit = util.PriorityQueue()
+    g_cost = {problem.getStartState(): 0}
+    nodes_to_visit.push(problem.getStartState(), 0)
+    prev = {}
+
+    while not nodes_to_visit.isEmpty():
+        state = nodes_to_visit.pop()
+        if problem.isGoalState(state):  # if goal state, then return list of moves
+            return getMoveList(state, prev)
+        visited.add(state)  # add state and cost to visited
+        successors = problem.getSuccessors(state)
+        for successor, action, cost in successors:
+            if successor not in g_cost.keys():
+                g_cost[successor] = float('inf')
+            if successor not in visited:
+                g = g_cost[state] + cost
+                if g < g_cost[successor]:
+                    prev[successor] = {"state": state, "action": action}
+                    g_cost[successor] = g
+                nodes_to_visit.update(successor, g_cost[successor])
 
 def nullHeuristic(state, problem=None):
     """
@@ -149,7 +171,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                     f = h + g
                 
                 nodes_to_visit.update(successor, f)
-
 
     return []
 
